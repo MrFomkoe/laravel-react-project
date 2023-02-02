@@ -38,12 +38,25 @@ function UserForm() {
 
     function onSubmit(e) {
         e.preventDefault();
-        console.log(user)
         if (user.id) {
             axiosClient
                 .patch(`/users/${user.id}`, user)
                 .then(() => {
                     showPopup("User has been updated");
+                    navigate("/users");
+                })
+                .catch((error) => {
+                    const response = error.response;
+                    if (response && response.status === 422) {
+                        console.log(response.data.errors);
+                        setErrors(response.data.errors);
+                    }
+                });
+        } else {
+            axiosClient
+                .post(`/users`, user)
+                .then(() => {
+                    showPopup("New user has been created");
                     navigate("/users");
                 })
                 .catch((error) => {
@@ -81,7 +94,9 @@ function UserForm() {
                             type="email"
                             placeholder="Email"
                         />
-                        {errors && <span className="alert">{errors.email}</span>}
+                        {errors && (
+                            <span className="alert">{errors.email}</span>
+                        )}
                         <input
                             onChange={(e) =>
                                 setUser({ ...user, password: e.target.value })
@@ -89,7 +104,9 @@ function UserForm() {
                             type="text"
                             placeholder="Password"
                         />
-                        {errors && <span className="alert">{errors.password}</span>}
+                        {errors && (
+                            <span className="alert">{errors.password}</span>
+                        )}
                         <input
                             onChange={(e) =>
                                 setUser({
@@ -101,8 +118,7 @@ function UserForm() {
                             placeholder="Password Confirmation"
                         />
                         <button type="submit" className="btn">
-                            {" "}
-                            Update{" "}
+                            Save
                         </button>
                     </form>
                 )}
