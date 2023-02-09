@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link, Navigate, Outlet } from "react-router-dom";
 import axiosClient from "../axios-client";
 import { useStateContext } from "../contexts/ContextProvider";
@@ -19,6 +19,21 @@ function DefaulLayout() {
             console.log(data)
         })
     };
+
+    function showPopup (message) {
+        console.log('click')
+        setPopup(true);
+        setPopupmessage(message);
+
+        setTimeout(() => {
+            setPopup(false);
+            setPopupmessage(null);
+        }, 2000);
+    }
+
+    // Unfortunately, I'm forced to move this useState here, otherwise, error thrown
+    const [popupMessage, setPopupmessage] = useState(null);
+    const [popup, setPopup] = useState(false);
 
     useEffect(() => {
         axiosClient.get('/user').then(({data}) => {
@@ -45,7 +60,8 @@ function DefaulLayout() {
                 </header>
 
                 <main>
-                    <Outlet />
+                    {popup && <div className="popup"> {popupMessage} </div>}
+                    <Outlet context={showPopup}/>
                 </main>
             </div>
         </div>
