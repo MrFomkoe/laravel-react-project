@@ -35,7 +35,7 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
-        $credentials = $request->validated();
+        // $credentials = $request->validated();
 
         $user = User::where('email', $request->email)->first();
 
@@ -46,16 +46,6 @@ class AuthController extends Controller
         }
 
         $token = $user->createToken('main')->plainTextToken;
-
-        // if (!Auth::attempt($credentials)) {
-        //     return response([
-        //         'message' => 'Credentials are incorrect'
-        //     ], 422);
-        // }
-
-        // /** @var \App\Models\User $user */
-        // $user = Auth::user();
-        // $token = $user->createToken('main')->plainTextToken;
 
         return response([
             'user' => $user,
